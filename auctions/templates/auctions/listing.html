@@ -1,0 +1,60 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    {{ listing.title }}
+{% endblock %}
+
+{% block body %}
+        <div class="col-md-4">
+            <img class="card-img-right flex-auto d-none d-md-block" src="{{ listing.image }}" alt="Card image cap">
+        </div>
+        <div class="col-md-8">
+            <div class="card flex-md-row mb-4 box-shadow h-md-250">
+                <div class="listing card-body d-flex flex-column align-items-start">
+                    <div class="title">
+                        <h1>{{ listing.title }} </h2>
+                    </div>
+                    <div class="store">
+                        {% if has_watchlist %}
+                            <a class="btn btn-primary btn-xs btn-block" href="{% url 'add_watchlist' listing.id %}">Add Watchlist</a>
+                        {% else %}
+                        <a class="btn btn-warning btn-xs btn-block" href="#">Remove from watchlist</a>
+                        {% endif %}
+                    </div>
+                    <div class="category">
+                        Categories:
+                        <ul class="list-inline">
+                            {% for item in categories %}
+                                <li class="list-inline-item">
+                                    <a href="{% url 'category' item.category.id %}">{{ item.category.title }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="description card-text mb-auto">{{ listing.description }}</div>
+                    <div class="price">
+                        <strong>Current Price: </strong>{{ listing.bid }}
+                    </div>
+                    <div class="bid">
+                        <strong>Bid: </strong>{{ listing.bid }}
+                    </div>
+                    {% if user.username != product.seller %}
+                        <strong>Place your Bid : </strong>
+                        <form action="#" method="POST">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">$</span>
+                                </div>
+                                <input type="number" class="form-control" value="0" required="">
+                            </div>
+                            <hr>
+                            <input class="btn btn-success" type="submit" value="Place Your Bid">
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+{% endblock %}

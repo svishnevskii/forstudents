@@ -1,3 +1,57 @@
 body {
     padding: 10px;
 }
+
+h2 {
+    text-transform: capitalize;
+}
+
+/* bio */
+.bio .name {
+    text-transform: capitalize;
+}
+
+.bio span {
+    margin-left: 20px
+}
+
+/* nav */
+.nav a {
+    font-size: 0.9rem;
+}
+
+/* components */
+.blog-header-logo {
+    font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+    font-size: 2.25rem;
+}
+
+/* listing */
+.container .card .listing div {
+    margin-bottom: 10px
+}
+
+.container .card .listing .category ul {
+    float: clear
+}
+
+.nav a, .listing .category ul li a{
+    text-transform: capitalize;
+}
+
+.container .card .listing .price{
+    color: green;
+}
+
+.container .card .listing .bid{
+    color: orange;
+}
+
+/* footer */
+.blog-footer {
+    padding: 1.5rem 0;
+    color: #999;
+    text-align: center;
+    background-color: #f9f9f9;
+    border-top: .05rem solid #e5e5e5;
+}

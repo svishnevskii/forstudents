@@ -1,7 +1,10 @@
 {% extends "auctions/layout.html" %}
 
-{% block body %}
-
+{% block auth %}
+    <div class="container">
+    <p>
+        Don't have an account? <a href="{% url 'register' %}">Register here.</a>
+    </p>
     <h2>Login</h2>
 
     {% if message %}
@@ -18,7 +21,9 @@
         </div>
         <input class="btn btn-primary" type="submit" value="Login">
     </form>
+    </div>
+    <br>
 
-    Don't have an account? <a href="{% url 'register' %}">Register here.</a>
+
 
 {% endblock %}

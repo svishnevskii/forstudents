@@ -28,8 +28,8 @@ class Listing(models.Model):
 
 
 class CategoryListing(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="categories")
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="relation")
 
     class Meta:
         verbose_name = _("Relationship of categories")
