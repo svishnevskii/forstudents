@@ -22,5 +22,11 @@
                   <img class="card-img-right flex-auto d-none d-md-block" src="{{ category.listing.image }}" alt="Card image cap">
                 </div>
             </div>
+        {% empty %}
+            <div class="container">
+                <div class="col-md-6">
+                    <h5>The category haven't listings</h5>
+                </div>
+            </div>
         {% endfor %}
 {% endblock %}

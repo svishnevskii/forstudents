@@ -63,6 +63,13 @@
                     {% endif %}
                 </div>
             </div>
+            {% if listing.user.id == user.id %}
+                <div class="btn btn-danger">
+                    Close Position
+                </div>
+            {% endif %}
+
         </div>
+
 
 {% endblock %}
