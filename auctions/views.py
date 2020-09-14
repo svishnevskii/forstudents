@@ -73,13 +73,22 @@ def listing(request, listing_id):
     except Listing.DoesNotExist:
         raise Http404("Listing not found.")
 
-    has_watchlist = Watchlist.objects.filter(
-            listing_id=listing_id, user=request.user)
+    has_watchlist = False if not request.user.is_authenticated else Watchlist.objects.filter(listing=listing_id, user=request.user)
+
+    #Check Alerts
+    if request.session.get('alert'):
+        alert = request.session.get('alert')
+        request.session['alert'] = ""
+    else:
+        alert = ""
+
+
 
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "categories": categories,
-        "has_watchlist": has_watchlist
+        "has_watchlist": has_watchlist,
+        "has_alert": alert
     })
 
 #Current category
@@ -97,25 +106,51 @@ def category(request, category_id):
         "categories": categories,
     })
 
-#Filtered list
-def watchlist(request, listing_id = None):
-    if request.user.is_authenticated:
-        #Если товар не добавляется в watchlist
-        if not listing_id:
-            #Берём watchlist авторизованного пользователя
-            watchlist = Watchlist.objects.filter(user_id=request.user.id)
-            return render(request, "auctions/watchlist.html", {
-                "watchlist": watchlist
-            })
-        else:
-            #Существует ли такой Listing
-            exists = Watchlist.objects.get(listing=listing_id)
-            if not exists:
-                listening = Listing.objects.get(id=listing_id)
-                #Добавляем Listing в Watchlist пользователя
-                w = Watchlist(listing=listening, user=request.user)
-                w.save()
-            else:
-                return Http404("Not found.")
-    else:
+
+#Watchlist Actions
+def add_watchlist(request, listing_id):
+    if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("login"))
+
+    current = Listing.objects.get(id = listing_id)
+    w = Watchlist(listing_id=current.id, user_id=request.user.id)
+    w.save()
+    return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+
+
+
+def delete_watchlist(request, listing_id):
+    if request.user.is_authenticated:
+        request.user.viewed.filter(listing_id=listing_id).delete()
+    return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+
+
+def watchlist(request):
+    # return HttpResponse(request.user.viewed.first().listing.title)
+    return render(request, "auctions/watchlist.html", {
+        "watchlist": request.user.viewed.all()
+    })
+
+#Bid Actions [open, close]
+def bid_open(request):
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("login"))
+
+        request.session['alert'] = ""
+
+        bid = int(request.POST.get('bid'))
+        lising_id = int(request.POST.get('listing_id'))
+
+        current = Listing.objects.get(pk=lising_id)
+
+        if current.bid < bid:
+            current.bid = bid
+            current.winner = User.objects.get(pk=request.user.id)
+            current.save()
+        else:
+            request.session['alert'] = f"The rate must be higher than the ${current.bid} price"
+
+        return HttpResponseRedirect(reverse("listing", args=[current.id]))
+    else:
+        return HttpResponseRedirect(reverse("index"))

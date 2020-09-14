@@ -16,9 +16,9 @@
                     </div>
                     <div class="store">
                         {% if has_watchlist %}
-                            <a class="btn btn-primary btn-xs btn-block" href="{% url 'add_watchlist' listing.id %}">Add Watchlist</a>
+                            <a class="btn btn-warning btn-xs btn-block" href="{% url 'delete_watchlist' listing.id %}">Remove from watchlist</a>
                         {% else %}
-                        <a class="btn btn-warning btn-xs btn-block" href="#">Remove from watchlist</a>
+                            <a class="btn btn-primary btn-xs btn-block" href="{% url 'add_watchlist' listing.id %}">Add Watchlist</a>
                         {% endif %}
                     </div>
                     <div class="category">
@@ -39,18 +39,26 @@
                     <div class="bid">
                         <strong>Bid: </strong>{{ listing.bid }}
                     </div>
-                    {% if user.username != product.seller %}
-                        <strong>Place your Bid : </strong>
-                        <form action="#" method="POST">
+                    {% if user.is_authenticated != listing.user %}
+
+                        {% if has_alert != "" %}
+                            <div class="alert alert-danger">{{ has_alert }}</div>
+                        {% endif %}
+
+                        <strong>Place Your Bid : </strong>
+
+                        <form action="{% url 'placebid' %}" method="POST">
                             {% csrf_token %}
+                            <input type="hidden" name="listing_id" value="{{ listing.id }}">
+
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">$</span>
                                 </div>
-                                <input type="number" class="form-control" value="0" required="">
+                                <input name="bid" type="number" class="form-control" value="0" required="">
                             </div>
                             <hr>
-                            <input class="btn btn-success" type="submit" value="Place Your Bid">
+                            <input class="btn btn-success" type="submit" value="Place Bid">
                         </form>
                     {% endif %}
                 </div>

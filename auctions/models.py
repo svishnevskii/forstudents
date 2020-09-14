@@ -20,7 +20,9 @@ class Listing(models.Model):
     image = models.CharField(max_length=200, default=None, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     disable = models.BooleanField()
+
     #relation keys
+    winner = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, related_name="winners")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listing")
 
     def __str__(self):
@@ -37,12 +39,8 @@ class CategoryListing(models.Model):
 
 
 class Watchlist(models.Model):
-    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="listing")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="users")
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="watchlist")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="viewed")
 
-
-class Winner(models.Model):
-    owner_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owner")
-    winner_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="winner")
-    is_winner = models.BooleanField()
-    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    def __str__(self):
+        return f"{self.id}  listing:{self.listing}"
