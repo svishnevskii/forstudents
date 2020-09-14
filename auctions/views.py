@@ -96,13 +96,15 @@ def category(request, category_id):
     """
     CategoryListing is relation table between Category and Listing models.
     """
-    try:
+    category = Category.objects.filter(pk=category_id)
+
+    if category.exists():
         categories = CategoryListing.objects.filter(category=category_id)
-    except CategoryListing.DoesNotExist:
-        raise Http404("Category not found.")
+    else:
+        return HttpResponseRedirect(reverse("index"))
 
     return render(request, "auctions/category.html", {
-        "category": categories.first().category,
+        "category": category.get(),
         "categories": categories,
     })
 
