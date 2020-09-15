@@ -9,7 +9,19 @@ from .models import User, Listing, Category, CategoryListing, Watchlist
 
 def index(request):
     return render(request, "auctions/index.html", {
-        "listings": Listing.objects.all(),
+        "listings": Listing.objects.all().filter(disable=False),
+        "categories" : Category.objects.all()
+    })
+
+def mylistings(request):
+    return render(request, "auctions/personal/listings.html", {
+        "listings": request.user.listing.all(),
+        "categories" : Category.objects.all()
+    })
+
+def mybids(request):
+    return render(request, "auctions/personal/listings.html", {
+        "listings": Listing.objects.filter(winner=request.user.id).all(),
         "categories" : Category.objects.all()
     })
 
@@ -130,10 +142,32 @@ def delete_watchlist(request, listing_id):
 def watchlist(request):
     # return HttpResponse(request.user.viewed.first().listing.title)
     return render(request, "auctions/watchlist.html", {
-        "watchlist": request.user.viewed.all()
+        "watchlist": request.user.viewed.all(),
+        "categories" : Category.objects.all()
     })
 
 #Bid Actions [open, close]
+def bid_close(request):
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("login"))
+
+        #todo factory
+        winner_id = int(request.POST.get('winner_id'))
+        listing_id = int(request.POST.get('listing_id'))
+
+
+        #Проверим существует ли передаваемы победитель
+        winner = has_user = User.objects.filter(pk=winner_id)
+        if not has_user:
+            return HttpResponseRedirect(reverse("login"))
+        else:
+            list = Listing.objects.filter(pk=listing_id, winner=winner.get().id).get()
+            list.disable = True # Close positin for bid
+            list.save()
+
+    return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+
 def bid_open(request):
     if request.method == "POST":
         if not request.user.is_authenticated:

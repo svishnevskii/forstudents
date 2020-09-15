@@ -1,0 +1,39 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    My Listings
+{% endblock %}
+
+{% block body %}
+        <div class="container">
+            <div class="col-md-12">
+                    <h2>My Listings</h2>
+            </div>
+        </div>
+        <hr>
+        {% for listing in listings %}
+            <div class="col-md-6">
+                <div class="card flex-md-row mb-4 box-shadow h-md-250">
+                  <div class="card-body d-flex flex-column align-items-start">
+
+                    <h3 class="mb-0">
+                      <a class="text-dark" href="#">{{ listing.title }}</a>
+                    </h3>
+                    <br>
+                    <p class="card-text mb-auto">{{ listing.description }}</p>
+                    <br>
+                    {% if listing.disable and listing.winner.id == user.id %}
+                        <span title="You Winner" class="btn btn-success">You Winner</span>
+                        <br>
+                        <a href="{% url 'listing' listing.id %}" class="btn btn-outline-primary">View</a>
+                    {% elif listing.disable %}
+                        <span title="Sold" class="btn btn-danger">Sold</span>
+                    {% endif %}
+
+
+                  </div>
+                  <img class="card-img-right flex-auto d-none d-md-block" src="{{ listing.image }}" alt="Card image cap">
+                </div>
+            </div>
+        {% endfor %}
+{% endblock %}

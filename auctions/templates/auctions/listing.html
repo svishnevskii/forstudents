@@ -22,24 +22,31 @@
                         {% endif %}
                     </div>
                     <div class="category">
-                        Categories:
-                        <ul class="list-inline">
+                        <strong>Categories: </strong>
+                        <ul class="list-inline" >
                             {% for item in categories %}
                                 <li class="list-inline-item">
-                                    <a href="{% url 'category' item.category.id %}">{{ item.category.title }}</a>
+                                    <a href="{% url 'category' item.category.id %}"> {{ item.category.title }}</a>
                                 </li>
+                            {% empty %}
+
+                                <p>hasn't categories</p>
+
                             {% endfor %}
                         </ul>
                     </div>
-
                     <div class="description card-text mb-auto">{{ listing.description }}</div>
                     <div class="price">
                         <strong>Current Price: </strong>{{ listing.bid }}
                     </div>
-                    <div class="bid">
-                        <strong>Bid: </strong>{{ listing.bid }}
-                    </div>
-                    {% if user.is_authenticated != listing.user %}
+
+                    {% if listing.disable and listing.winner.id == user.id %}
+                        <span title="You Winner" class="btn btn-lg btn-success">You Winner</span>
+                    {% elif listing.disable %}
+                        <span title="Sold" class="btn btn-danger">Sold</span>
+                    {% endif %}
+
+                    {% if user.is_authenticated != listing.user and listing.disable == False %}
 
                         {% if has_alert != "" %}
                             <div class="alert alert-danger">{{ has_alert }}</div>
@@ -64,9 +71,12 @@
                 </div>
             </div>
             {% if listing.user.id == user.id %}
-                <div class="btn btn-danger">
-                    Close Position
-                </div>
+                <form action="{% url 'closebid' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                    <input type="hidden" name="winner_id" value="{{ listing.winner.id }}">
+                    <input type="submit" name="" value="Close Position" class="btn btn-danger">
+                </form>
             {% endif %}
 
         </div>

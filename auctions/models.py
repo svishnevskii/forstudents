@@ -18,7 +18,6 @@ class Listing(models.Model):
     description = models.TextField()
     bid = models.IntegerField()
     image = models.CharField(max_length=200, default=None, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
     disable = models.BooleanField()
 
     #relation keys
