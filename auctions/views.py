@@ -1,10 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, QueryDict
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
 
-from .models import User, Listing, Category, CategoryListing, Watchlist
+from .models import User, Listing, Category, CategoryListing, Watchlist, Comment
 
 
 def index(request):
@@ -77,13 +78,16 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+class CommentForm(forms.Form):
+    description = forms.CharField(widget=forms.Textarea(attrs = {'class' : 'form-control col-md-12 col-lg-12', 'rows' : 8}), label='Your Comment')
+
 #Single Card
 def listing(request, listing_id):
     try:
         listing = Listing.objects.get(id=listing_id)
         categories = listing.relation.all()
     except Listing.DoesNotExist:
-        raise Http404("Listing not found.")
+        return HttpResponseRedirect(reverse("index"))
 
     has_watchlist = False if not request.user.is_authenticated else Watchlist.objects.filter(listing=listing_id, user=request.user)
 
@@ -94,11 +98,12 @@ def listing(request, listing_id):
     else:
         alert = ""
 
-
-
     return render(request, "auctions/listing.html", {
         "listing": listing,
-        "categories": categories,
+        "comments": listing.comments.all(),
+        "comment_form": CommentForm(),
+        "self_categories": categories,
+        "categories" : Category.objects.all(),
         "has_watchlist": has_watchlist,
         "has_alert": alert
     })
@@ -117,7 +122,8 @@ def category(request, category_id):
 
     return render(request, "auctions/category.html", {
         "category": category.get(),
-        "categories": categories,
+        "collection": categories,
+        "categories" : Category.objects.all()
     })
 
 
@@ -190,3 +196,71 @@ def bid_open(request):
         return HttpResponseRedirect(reverse("listing", args=[current.id]))
     else:
         return HttpResponseRedirect(reverse("index"))
+
+class ListingForm(forms.Form):
+    title   = forms.CharField(widget = forms.TextInput(attrs = {'class' : 'form-control col-md-12 col-lg-12'}), label = "Title")
+    description = forms.CharField(widget=forms.Textarea(attrs = {'class' : 'form-control col-md-12 col-lg-12', 'rows' : 8}), label='Description')
+    bid = forms.IntegerField(widget=forms.NumberInput(attrs = {'class' : 'form-control col-md-12 col-lg-12'}), label='Bid ($)')
+    image   = forms.CharField(widget = forms.TextInput(attrs = {'class' : 'form-control col-md-12 col-lg-12'}), label = "Url")
+
+
+def listing_create(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form = ListingForm(request.POST)
+            if form.is_valid():
+                listing = Listing()
+                relationship = CategoryListing()
+
+                # Make Listing
+                listing.title = form.cleaned_data["title"]
+                listing.description = form.cleaned_data["description"]
+                listing.bid = form.cleaned_data["bid"]
+                listing.image = form.cleaned_data["image"]
+                listing.user = request.user
+                listing.save()
+
+
+                # Make a relationship with Models
+                categories = request.POST.getlist('categories')
+                if categories is not None:
+                    for category in categories:
+                        currentCategory = Category.objects.get(pk=category)
+                        CategoryListing.objects.create(category=currentCategory, listing=listing)
+
+                return HttpResponseRedirect(reverse("listing", args=[listing.id]))
+            else:
+                return render(request, "auctions/actions/create.html", {
+                    "form": form
+                })
+
+        else:
+            return render(request, "auctions/actions/create.html", {
+                "form": ListingForm(),
+                "categories" : Category.objects.all()
+            })
+    else:
+        return HttpResponseRedirect(reverse("login"))
+
+def comment(request, listing_id=None):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+
+            form = CommentForm(request.POST)
+
+            listing = Listing.objects.filter(pk=listing_id)
+
+            if not listing:
+                return HttpResponseRedirect(reverse("index"))
+
+            if form.is_valid():
+                comment = Comment()
+                comment.description = form.cleaned_data["description"]
+                comment.listing = listing.get()
+                comment.save()
+
+            return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+        else:
+            return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+    else:
+        return HttpResponseRedirect(reverse("login"))

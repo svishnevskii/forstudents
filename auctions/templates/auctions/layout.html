@@ -7,6 +7,17 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
         <link href="//fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
+        <meta property="og:title" content="Commerce - CS50's Web Programming with Python and JavaScript">
+        <link href="https://cs50.harvard.edu/web/2020/favicon.ico?1599763123" rel="icon">
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+
+        <!-- (Optional) Latest compiled and minified JavaScript translation files -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-*.min.js"></script>
     </head>
     <body>
 
@@ -43,7 +54,7 @@
                             <a class="btn btn-sm btn-primary" href="{% url 'logout' %}">Log Out</a>
                         </span>
                         <span>
-                            <a class="btn btn-sm btn-success" href="">Create</a>
+                            <a class="btn btn-sm btn-success" href="{% url 'listing_create' %}">Create</a>
                         </span>
                     {% else %}
                         <a class="btn btn-sm btn-primary" href="{% url 'login' %}">Sign up</a>
@@ -53,7 +64,7 @@
           </header>
 
           <div class="nav-scroller py-1 mb-2">
-            <nav class="nav d-flex justify-content-between">
+            <nav class="nav categories-list d-flex justify-content-between">
               {% for category in categories %}
                 <a class="p-2 text-muted" href="{% url 'category' category.id %}">{{ category.title }}</a>
               {% endfor %}
@@ -72,6 +83,8 @@
 
         <footer class="blog-footer">
           <p>Made with <a href="https://www.linkedin.com/in/svishnevskii/">♥️</a></p>
+          <span>CS50’s Web Programming with Python and JavaScript</span><br>
+          <span>Project 2: Commerce</span>
         </footer>
     </body>
 </html>

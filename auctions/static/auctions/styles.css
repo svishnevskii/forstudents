@@ -8,7 +8,7 @@ h2 {
 }
 
 /* bio */
-.bio .name {
+.name {
     text-transform: capitalize;
 }
 
@@ -21,10 +21,28 @@ h2 {
     font-size: 0.9rem;
 }
 
+.categories-list {
+    border-bottom: 1px solid #d8d8d8;
+}
+
 /* components */
+.errorlist li {
+    color: red;
+    list-style-type: none;
+}
+
 .blog-header-logo {
     font-family: "Playfair Display", Georgia, "Times New Roman", serif;
     font-size: 2.25rem;
+}
+
+.card-image {
+    height: 100%;
+    width: 100%;
+}
+
+.no-padding {
+    padding: 0px
 }
 
 /* listing */

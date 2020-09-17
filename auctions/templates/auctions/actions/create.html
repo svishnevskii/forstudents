@@ -1,0 +1,29 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+        <div class="container">
+            <div class="col-md-12">
+                <h2>Create Listing</h2>
+            </div>
+        </div>
+        <div class="col-md-6">
+                <form action="{{ path }}" method="post">
+                    {% csrf_token %}
+                    {{ form }}
+                    <label for="">Category:</label><br>
+
+                    {% for category in categories %}
+                        <input type="checkbox" name="categories" value="{{ category.id }}"> {{ category.title }} <br>
+                    {% endfor %}
+
+                    <br>
+
+                    <input type="submit" class="btn btn-primary" value="Create">
+                </form>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#example-getting-started').multiselect();
+            });
+        </script>
+{% endblock %}

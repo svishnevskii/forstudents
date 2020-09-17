@@ -1,0 +1,33 @@
+<div class="col-md-6">
+    <div class="card flex-md-row mb-4 box-shadow h-md-250">
+        <div class="col-7">
+            <div class="card-body d-flex flex-column align-items-start">
+
+              <h3 class="mb-0">
+                  <a class="text-dark" href="#">{{ listing.title }}</a>
+              </h3>
+              <br>
+              <p class="card-text mb-auto">{{ listing.description }}</p>
+              <div class="price">
+                  <strong>Current Price: </strong>${{ listing.bid }}
+              </div>
+              <br>
+              {% if listing.disable and listing.winner.id == user.id %}
+                  <span title="You Winner" class="btn btn-success">You Winner</span>
+              {% elif listing.disable %}
+                  <span title="Sold" class="btn btn-danger">Sold</span>
+              {% else %}
+                  <span title="The bids continue" class="btn btn-outline-warning">Bets are accepted</span>
+              {% endif %}
+              <br>
+
+              <a href="{% url 'listing' listing.id %}" class="btn btn-outline-primary">View</a>
+        </div>
+
+        </div>
+        <div class="col-5 no-padding">
+            <div class="card-image" style="background: url({{ listing.image }}) no-repeat center; background-size: cover;">
+            </div>
+        </div>
+    </div>
+</div>

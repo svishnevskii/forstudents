@@ -6,13 +6,22 @@
 
 {% block body %}
         <div class="col-md-4">
-            <img class="card-img-right flex-auto d-none d-md-block" src="{{ listing.image }}" alt="Card image cap">
+            <div class="card-image" style="background: url({{ listing.image }}) no-repeat center; background-size: cover;" alt="{{ listing.title }}">
+            </div>
         </div>
         <div class="col-md-8">
             <div class="card flex-md-row mb-4 box-shadow h-md-250">
                 <div class="listing card-body d-flex flex-column align-items-start">
                     <div class="title">
-                        <h1>{{ listing.title }} </h2>
+                        <h1>{{ listing.title }}</h1>
+                        {% if listing.user.id == user.id %}
+                            <form action="{% url 'closebid' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                                <input type="hidden" name="winner_id" value="{{ listing.winner.id }}">
+                                <input type="submit" name="" value="Close Position" class="btn btn-danger">
+                            </form>
+                        {% endif %}
                     </div>
                     <div class="store">
                         {% if has_watchlist %}
@@ -24,20 +33,23 @@
                     <div class="category">
                         <strong>Categories: </strong>
                         <ul class="list-inline" >
-                            {% for item in categories %}
+                            {% for item in self_categories %}
                                 <li class="list-inline-item">
                                     <a href="{% url 'category' item.category.id %}"> {{ item.category.title }}</a>
                                 </li>
                             {% empty %}
 
-                                <p>hasn't categories</p>
+                                <p>Not Categories Listed</p>
 
                             {% endfor %}
                         </ul>
                     </div>
                     <div class="description card-text mb-auto">{{ listing.description }}</div>
+                    <div class="seller">
+                        <strong>Listed by: </strong><span class="name">{{ listing.user.username }}</span>
+                    </div>
                     <div class="price">
-                        <strong>Current Price: </strong>{{ listing.bid }}
+                        <strong>Current Price: </strong>${{ listing.bid }}
                     </div>
 
                     {% if listing.disable and listing.winner.id == user.id %}
@@ -62,7 +74,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">$</span>
                                 </div>
-                                <input name="bid" type="number" class="form-control" value="0" required="">
+                                <input name="bid" type="number" class="form-control" required="">
                             </div>
                             <hr>
                             <input class="btn btn-success" type="submit" value="Place Bid">
@@ -70,16 +82,9 @@
                     {% endif %}
                 </div>
             </div>
-            {% if listing.user.id == user.id %}
-                <form action="{% url 'closebid' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="listing_id" value="{{ listing.id }}">
-                    <input type="hidden" name="winner_id" value="{{ listing.winner.id }}">
-                    <input type="submit" name="" value="Close Position" class="btn btn-danger">
-                </form>
-            {% endif %}
 
         </div>
-
+        <!-- Comments -->
+        {% include 'auctions/components/comment.html' %}
 
 {% endblock %}
