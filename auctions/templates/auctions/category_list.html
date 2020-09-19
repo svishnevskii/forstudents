@@ -1,0 +1,30 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    All Categories
+{% endblock %}
+
+{% block body %}
+        <div class="container">
+            <div class="col-md-12">
+                <h2>All Categories</h2>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <div class="col-md-6">
+                <ul>
+                    {% for category in categories %}
+                        <li>
+                            <a class="btn btn-link category-list-item" href="{% url 'category' category.id %}">
+                                {{ category.title }}
+                            </a>
+                            <span title="Number of records" class="category-count-info">{{ category.categories.count }}</span>
+                        </li>
+                    {% empty %}
+                        <li>No categories.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+{% endblock %}

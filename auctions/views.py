@@ -8,20 +8,37 @@ from django import forms
 from .models import User, Listing, Category, CategoryListing, Watchlist, Comment
 
 
+class ListingForm(forms.Form):
+    title   = forms.CharField(widget = forms.TextInput(attrs = {'class' : 'form-control col-md-12 col-lg-12'}), label = "Title")
+    description = forms.CharField(widget=forms.Textarea(attrs = {'class' : 'form-control col-md-12 col-lg-12', 'rows' : 8}), label='Description')
+    bid = forms.IntegerField(widget=forms.NumberInput(attrs = {'class' : 'form-control col-md-12 col-lg-12'}), label='Bid ($)')
+    image   = forms.CharField(widget = forms.TextInput(attrs = {'class' : 'form-control col-md-12 col-lg-12'}), label = "Url")
+
+class CommentForm(forms.Form):
+    description = forms.CharField(widget=forms.Textarea(attrs = {'class' : 'form-control col-md-12 col-lg-12', 'rows' : 8}), label='Your Comment')
+
+
 def index(request):
     return render(request, "auctions/index.html", {
         "listings": Listing.objects.all().filter(disable=False),
         "categories" : Category.objects.all()
     })
 
+def category_list(request):
+    return render(request, "auctions/category_list.html", {
+        "categories": Category.objects.all()
+    })
+
 def mylistings(request):
     return render(request, "auctions/personal/listings.html", {
+        "title": "My Listings",
         "listings": request.user.listing.all(),
         "categories" : Category.objects.all()
     })
 
 def mybids(request):
     return render(request, "auctions/personal/listings.html", {
+        "title": "My Bids",
         "listings": Listing.objects.filter(winner=request.user.id).all(),
         "categories" : Category.objects.all()
     })
@@ -77,9 +94,6 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
-
-class CommentForm(forms.Form):
-    description = forms.CharField(widget=forms.Textarea(attrs = {'class' : 'form-control col-md-12 col-lg-12', 'rows' : 8}), label='Your Comment')
 
 #Single Card
 def listing(request, listing_id):
@@ -158,18 +172,23 @@ def bid_close(request):
         if not request.user.is_authenticated:
             return HttpResponseRedirect(reverse("login"))
 
-        #todo factory
-        winner_id = int(request.POST.get('winner_id'))
+        #If there is no bid, the winner will be the seller
+        if not request.POST['winner_id']:
+            user_id = request.user.id
+        else:
+            user_id = int(request.POST.get('winner_id'))
+
+        #Fk
+        winner_id = user_id
         listing_id = int(request.POST.get('listing_id'))
 
-
-        #Проверим существует ли передаваемы победитель
+        #Check if a passed winner exists
         winner = has_user = User.objects.filter(pk=winner_id)
         if not has_user:
-            return HttpResponseRedirect(reverse("login"))
+            return HttpResponseRedirect(reverse("index"))
         else:
-            list = Listing.objects.filter(pk=listing_id, winner=winner.get().id).get()
-            list.disable = True # Close positin for bid
+            list = Listing.objects.filter(pk=listing_id).get()
+            list.disable = True #Close position for bid
             list.save()
 
     return HttpResponseRedirect(reverse("listing", args=[listing_id]))
@@ -197,11 +216,6 @@ def bid_open(request):
     else:
         return HttpResponseRedirect(reverse("index"))
 
-class ListingForm(forms.Form):
-    title   = forms.CharField(widget = forms.TextInput(attrs = {'class' : 'form-control col-md-12 col-lg-12'}), label = "Title")
-    description = forms.CharField(widget=forms.Textarea(attrs = {'class' : 'form-control col-md-12 col-lg-12', 'rows' : 8}), label='Description')
-    bid = forms.IntegerField(widget=forms.NumberInput(attrs = {'class' : 'form-control col-md-12 col-lg-12'}), label='Bid ($)')
-    image   = forms.CharField(widget = forms.TextInput(attrs = {'class' : 'form-control col-md-12 col-lg-12'}), label = "Url")
 
 
 def listing_create(request):

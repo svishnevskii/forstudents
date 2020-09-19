@@ -6,22 +6,26 @@
               <h3 class="mb-0">
                   <a class="text-dark" href="#">{{ listing.title }}</a>
               </h3>
-              <br>
-              <p class="card-text mb-auto">{{ listing.description }}</p>
               <div class="price">
                   <strong>Current Price: </strong>${{ listing.bid }}
               </div>
+              <br>
+              <p class="card-text mb-auto">{{ listing.description }}</p>
+
               <br>
               {% if listing.disable and listing.winner.id == user.id %}
                   <span title="You Winner" class="btn btn-success">You Winner</span>
               {% elif listing.disable %}
                   <span title="Sold" class="btn btn-danger">Sold</span>
               {% else %}
-                  <span title="The bids continue" class="btn btn-outline-warning">Bets are accepted</span>
+                  <span title="The bids continue" class="alert alert-info">Bets are accepted</span>
               {% endif %}
               <br>
-
-              <a href="{% url 'listing' listing.id %}" class="btn btn-outline-primary">View</a>
+              <ul class="list-inline">
+                  <li class="list-inline-item">
+                      <a href="{% url 'listing' listing.id %}" class="btn btn-outline-primary">View</a>
+                  </li>
+              </ul>
         </div>
 
         </div>

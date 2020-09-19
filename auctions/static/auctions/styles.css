@@ -26,6 +26,25 @@ h2 {
 }
 
 /* components */
+
+.container .category-count-info {
+    background: blue;
+    border-radius: 5px;
+    font-size: 15px;
+    color: white;
+
+    padding: 5px
+}
+
+.no-pointer {
+    cursor: auto;
+}
+
+.form-control-checkbox, .category-list-item {
+    text-transform: capitalize;
+    margin-right: 10px;
+}
+
 .errorlist li {
     color: red;
     list-style-type: none;
@@ -41,11 +60,18 @@ h2 {
     width: 100%;
 }
 
+.card-body .price {
+    color: green
+}
+
 .no-padding {
     padding: 0px
 }
 
 /* listing */
+.container .card .listing .price {
+    font-size: 25px;
+}
 .container .card .listing div {
     margin-bottom: 10px
 }

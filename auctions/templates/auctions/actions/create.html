@@ -1,5 +1,9 @@
 {% extends "auctions/layout.html" %}
 
+{% block title %}
+    Create New Listing
+{% endblock %}
+
 {% block body %}
         <div class="container">
             <div class="col-md-12">
@@ -10,14 +14,16 @@
                 <form action="{{ path }}" method="post">
                     {% csrf_token %}
                     {{ form }}
+                    <br>
                     <label for="">Category:</label><br>
 
                     {% for category in categories %}
-                        <input type="checkbox" name="categories" value="{{ category.id }}"> {{ category.title }} <br>
+                        <input type="checkbox" name="categories" value="{{ category.id }}"><span class="form-control-checkbox"> {{ category.title }} </span>
                     {% endfor %}
 
-                    <br>
 
+                    <br>
+                    <br>
                     <input type="submit" class="btn btn-primary" value="Create">
                 </form>
         </div>

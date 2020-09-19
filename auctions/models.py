@@ -33,7 +33,7 @@ class Comment(models.Model):
     description = models.TextField()
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
 
-    def __str__(slef):
+    def __str__(self):
         return f"{self.description}"
 
 

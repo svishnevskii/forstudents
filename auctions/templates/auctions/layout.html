@@ -9,52 +9,48 @@
         <link href="//fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
         <meta property="og:title" content="Commerce - CS50's Web Programming with Python and JavaScript">
         <link href="https://cs50.harvard.edu/web/2020/favicon.ico?1599763123" rel="icon">
-
-        <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
-
-        <!-- Latest compiled and minified JavaScript -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
-
-        <!-- (Optional) Latest compiled and minified JavaScript translation files -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-*.min.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
     <body>
 
         <div class="container">
           <header class="blog-header py-3">
             <div class="row flex-nowrap justify-content-between align-items-center">
-                <div class="col-3 text-left" wfd-id="50">
+                <div class="col-2 text-left" wfd-id="50">
                     <a class="blog-header-logo text-dark" href="{% url 'index' %}">Auctions</a>
                 </div>
-                <div class="col-5 text-left">
+                <div class="col-6 text-left">
                     <ul class="nav">
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'categories' %}">Categories</a>
+                        </li>
                         {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'watchlist' %}">My Watchlist</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'mylistings' %}">My Listing</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'mybids' %}">My Bids</a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'watchlist' %}">My Watchlist</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'mylistings' %}">My Listings</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'mybids' %}">My Bids</a>
+                            </li>
                         {% endif %}
                     </ul>
                 </div>
                 <div class="col-4 d-flex justify-content-end align-items-center bio">
                     {% if user.is_authenticated %}
                         <span>
-                            <span class="name"> {{ user.username }}</span>
+
+                            <span class="name"><i class="fa fa-user-o"></i> {{ user.username }}</span>
                         </span>
                         <span>
                             <a class="btn btn-sm btn-primary" href="{% url 'logout' %}">Log Out</a>
                         </span>
                         <span>
-                            <a class="btn btn-sm btn-success" href="{% url 'listing_create' %}">Create</a>
+                            <a class="btn btn-sm btn-success" href="{% url 'listing_create' %}">Create Listing</a>
                         </span>
                     {% else %}
                         <a class="btn btn-sm btn-primary" href="{% url 'login' %}">Sign up</a>

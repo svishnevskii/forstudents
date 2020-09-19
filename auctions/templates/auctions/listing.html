@@ -14,22 +14,28 @@
                 <div class="listing card-body d-flex flex-column align-items-start">
                     <div class="title">
                         <h1>{{ listing.title }}</h1>
-                        {% if listing.user.id == user.id %}
-                            <form action="{% url 'closebid' %}" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="listing_id" value="{{ listing.id }}">
-                                <input type="hidden" name="winner_id" value="{{ listing.winner.id }}">
-                                <input type="submit" name="" value="Close Position" class="btn btn-danger">
-                            </form>
-                        {% endif %}
+
+                        <ul class="list-inline">
+                            {% if listing.user.id == user.id and listing.disable == False %}
+                                <li class="list-inline-item">
+                                    <form action="{% url 'closebid' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                                        <input type="hidden" name="winner_id" value="{{ listing.winner.id }}">
+                                        <input type="submit" name="" value="Close Position" class="btn btn-danger">
+                                    </form>
+                                </li>
+                            {% endif %}
+                            <li class="list-inline-item">
+                                {% if has_watchlist %}
+                                    <a class="btn btn-warning btn-xs btn-block" href="{% url 'delete_watchlist' listing.id %}">Remove from watchlist</a>
+                                {% else %}
+                                    <a class="btn btn-primary btn-xs btn-block" href="{% url 'add_watchlist' listing.id %}">Add Watchlist</a>
+                                {% endif %}
+                            </li>
+                        </ul>
                     </div>
-                    <div class="store">
-                        {% if has_watchlist %}
-                            <a class="btn btn-warning btn-xs btn-block" href="{% url 'delete_watchlist' listing.id %}">Remove from watchlist</a>
-                        {% else %}
-                            <a class="btn btn-primary btn-xs btn-block" href="{% url 'add_watchlist' listing.id %}">Add Watchlist</a>
-                        {% endif %}
-                    </div>
+
                     <div class="category">
                         <strong>Categories: </strong>
                         <ul class="list-inline" >
@@ -44,7 +50,13 @@
                             {% endfor %}
                         </ul>
                     </div>
-                    <div class="description card-text mb-auto">{{ listing.description }}</div>
+
+                    <div class="description card-text mb-auto">
+                        <strong>Description: </strong>
+                        {{ listing.description }}
+                    </div>
+                    <br>
+
                     <div class="seller">
                         <strong>Listed by: </strong><span class="name">{{ listing.user.username }}</span>
                     </div>
@@ -55,7 +67,7 @@
                     {% if listing.disable and listing.winner.id == user.id %}
                         <span title="You Winner" class="btn btn-lg btn-success">You Winner</span>
                     {% elif listing.disable %}
-                        <span title="Sold" class="btn btn-danger">Sold</span>
+                        <span title="Sold" class="alert alert-danger">Sold</span>
                     {% endif %}
 
                     {% if user.is_authenticated != listing.user and listing.disable == False %}
@@ -80,6 +92,8 @@
                             <input class="btn btn-success" type="submit" value="Place Bid">
                         </form>
                     {% endif %}
+                    <br>
+
                 </div>
             </div>
 
